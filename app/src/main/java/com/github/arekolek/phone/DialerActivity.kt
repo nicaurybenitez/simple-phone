@@ -1,6 +1,7 @@
 package com.github.arekolek.phone
 
 import android.Manifest.permission.CALL_PHONE
+import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import android.telecom.TelecomManager
@@ -10,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.core.content.PermissionChecker.checkSelfPermission
-import androidx.core.net.toUri
 import kotlinx.android.synthetic.main.activity_dialer.*
 
 
@@ -34,8 +34,11 @@ class DialerActivity : AppCompatActivity() {
 
     private fun makeCall() {
         if (checkSelfPermission(this, CALL_PHONE) == PERMISSION_GRANTED) {
-            val uri = "tel:${phoneNumberInput.text}".toUri()
-            startActivity(Intent(Intent.ACTION_CALL, uri))
+            val sendIntent = Intent("android.intent.action.MAIN")
+            sendIntent.component = ComponentName("com.whatsapp", "com.whatsapp.Conversation")
+            val waNumber: String = "tel:${phoneNumberInput.text}"
+            sendIntent.putExtra("jid", "$waNumber@s.whatsapp.net")
+            startActivity(sendIntent)
         } else {
             requestPermissions(this, arrayOf(CALL_PHONE), REQUEST_PERMISSION)
         }
